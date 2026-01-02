@@ -12,5 +12,12 @@ class DNAAnalysisOptions(BaseModel):
     reverse_compliment:bool
     check_validity:bool
 
+
+class DNAAnalysisResponse(BaseModel):
+    gc_content:float|None
+    nucleotide_count:dict|None
+    reverse_compliment:str|None
+    validity:bool|None
+
 #-----function signature for Shubh: def analyze_dna(seq:DNASequence,options:DNAAnalysisOptions)
 #----- reponse model not designed yet------
