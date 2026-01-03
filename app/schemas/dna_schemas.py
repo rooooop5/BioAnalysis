@@ -1,4 +1,8 @@
-from pydantic import BaseModel,Field
+from pydantic import BaseModel
+from typing import List,Literal
+
+DNAInvalidReasons=Literal["invalid character","contains whitespace","non string input",
+                          "empty sequence","sequence too short","length not multiple of three"]
 
 #----model of the dna seq request-----
 class DNASequence(BaseModel):
@@ -10,7 +14,6 @@ class DNAAnalysisOptions(BaseModel):
     gc_content:bool
     nucleotide_count:bool
     reverse_compliment:bool
-    
 
 
 class DNAAnalysisResponse(BaseModel):
@@ -18,5 +21,8 @@ class DNAAnalysisResponse(BaseModel):
     nucleotide_count:dict|None
     reverse_compliment:str|None
     is_valid:bool
-
 #-----function signature for Shubh: def analyze_dna(seq:DNASequence,options:DNAAnalysisOptions)->DNAAnalysisResponse
+
+class DNAValidityResponse(BaseModel):
+    is_valid:bool
+    error:List[DNAInvalidReasons]|None=None
