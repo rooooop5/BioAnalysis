@@ -1,0 +1,71 @@
+# =====================
+# Python
+# =====================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# =====================
+# FastAPI / Uvicorn
+# =====================
+*.log
+uvicorn.log
+
+# =====================
+# Environment variables
+# =====================
+.env
+.env.*
+secrets.env
+
+# =====================
+# OS files
+# =====================
+.DS_Store
+Thumbs.db
+
+# =====================
+# Editors / IDEs
+# =====================
+.vscode/
+.idea/
+
+# =====================
+# Bioinformatics outputs
+# =====================
+*.fasta
+*.fa
+*.fastq
+*.fq
+*.aln
+*.bam
+*.sam
+*.vcf
+*.gb
+*.gff
+
+# Analysis outputs
+results/
+outputs/
+tmp/
+temp/
+
+# =====================
+# Test artifacts
+# =====================
+.coverage
+htmlcov/
+pytest_cache/
+
+# =====================
+# Build artifacts
+# =====================
+build/
+dist/
+*.egg-info/
