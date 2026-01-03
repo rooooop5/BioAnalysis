@@ -8,9 +8,7 @@
 ## Initial steps for shubh
  - make a dir name it wtv, preferably same as github repo
  - initialise and setup git in it, and connect to the github repo
- - first create a pull req from main branch, use cmd : `git checkout main`
- - then do a pull, use cmd : `git pull origin main`
- - then change branch to shubh's branch (branch name "biopy"),use cmd : `git checkout biopy`
+ - then make a new branch using cmd : `git branch -b <branch-name> endpoints` or use GUI of github
  - now do wtv needed changes in this branch
 
 
