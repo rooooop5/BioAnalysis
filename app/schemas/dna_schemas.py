@@ -10,7 +10,7 @@ class DNAAnalysisOptions(BaseModel):
     gc_content:bool
     nucleotide_count:bool
     reverse_compliment:bool
-    check_validity:bool
+    
 
 
 class DNAAnalysisResponse(BaseModel):
