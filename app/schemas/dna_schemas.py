@@ -1,4 +1,4 @@
-from typing import List, Literal
+from typing import List, Literal,Optional
 
 from pydantic import BaseModel
 
@@ -25,14 +25,14 @@ class DNAAnalysisOptions(BaseModel):
 
 
 class DNAAnalysisResponse(BaseModel):
-    length:str
-    gc_content: float | None
-    nucleotide_count: dict | None
-    reverse_compliment: str | None
+    length:int
+    gc_fraction: Optional[float]=None
+    nucleotide_count: Optional[dict]=None
+    reverse_compliment: Optional[str]=None
     is_valid: bool
 
 
-# -----function signature for Shubh: def analyze_dna(seq:DNASequence,options:DNAAnalysisOptions)->DNAAnalysisResponse
+# -----function signature for Shubh: def analyze_dna(seq:DNASequence,options:DNAAnalysisOptions)->dict
 
 
 class DNAValidityResponse(BaseModel):

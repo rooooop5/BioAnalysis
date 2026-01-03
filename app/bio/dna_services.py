@@ -11,11 +11,21 @@ import re
 #     "sequence too short",
 #     "length not multiple of three"
 # ]
-def dna_validity(req:str):
+def dna_validity(dna:DNASequence):
+    req=dna.seq
     is_valid=True
     invalidity_reason=[]
     if re.findall(r"[^ATGC]",req):
         invalidity_reason.append("invalid character(s) present")
+        is_valid=False
+    if re.search(r"\s",req):
+        invalidity_reason.append("contains whitespace")
+        is_valid=False
+    if re.search(r"\d",req):
+        invalidity_reason.append("non string input")
+        is_valid=False
+    if len(req)==0:
+        invalidity_reason.append("empty sequence")
         is_valid=False
     return {"is_valid":is_valid,"invalidity_reason":invalidity_reason}
 
