@@ -3,12 +3,12 @@ from typing import List, Literal
 from pydantic import BaseModel
 
 DNAInvalidReasons = Literal[
-    "invalid character",
+    "invalid character(s) present",
     "contains whitespace",
     "non string input",
     "empty sequence",
     "sequence too short",
-    "length not multiple of three",
+    "length not multiple of three"
 ]
 
 
@@ -25,6 +25,7 @@ class DNAAnalysisOptions(BaseModel):
 
 
 class DNAAnalysisResponse(BaseModel):
+    length:str
     gc_content: float | None
     nucleotide_count: dict | None
     reverse_compliment: str | None
@@ -36,4 +37,4 @@ class DNAAnalysisResponse(BaseModel):
 
 class DNAValidityResponse(BaseModel):
     is_valid: bool
-    error: List[DNAInvalidReasons] | None = None
+    invalidity_reason: List[DNAInvalidReasons] | None = None
