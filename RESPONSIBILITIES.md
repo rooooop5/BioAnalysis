@@ -15,10 +15,10 @@
 
 
 ## Following functions will be written by Shubh
- - dna analysis function -> takes DNASequence and DNAAnalysisOptions, returns a DNAAnalysisResponse
- - shows
+ - dna validity check function -> takes DNASequence, returns a DNAValidityResponse.
+ - dna analysis function -> takes DNASequence and DNAAnalysisOptions, returns a DNAAnalysisResponse. It shows:
   1. seq length
   2. gc content
   3. nucleotide count
-  4. if it is a valid seq (has only bases A,T,G,C)
+  4. if it is a valid seq -> uses the validity function already defined
   5. reverse compliment of the seq
