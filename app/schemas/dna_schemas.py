@@ -16,6 +16,6 @@ class DNAAnalysisResponse(BaseModel):
     gc_content:float|None
     nucleotide_count:dict|None
     reverse_compliment:str|None
-    valid:bool|None
+    is_valid:bool
 
 #-----function signature for Shubh: def analyze_dna(seq:DNASequence,options:DNAAnalysisOptions)->DNAAnalysisResponse
