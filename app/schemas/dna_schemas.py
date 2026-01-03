@@ -19,5 +19,5 @@ class DNAAnalysisResponse(BaseModel):
     reverse_compliment:str|None
     validity:bool|None
 
-#-----function signature for Shubh: def analyze_dna(seq:DNASequence,options:DNAAnalysisOptions)
+#-----function signature for Shubh: def analyze_dna(seq:DNASequence,options:DNAAnalysisOptions)->DNAAnalysisResponse
 #----- reponse model not designed yet------
