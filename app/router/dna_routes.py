@@ -16,8 +16,8 @@ dna_router = APIRouter(prefix="/dna", tags=["DNA"])
 )
 def check_validity(dna: DNASequence):
     reasons_dict=dna_validity(dna)
-    invalidity_reasons=DNAValidityResponse.model_validate(reasons_dict)
-    return invalidity_reasons
+    validity=DNAValidityResponse.model_validate(reasons_dict)
+    return validity
 
 
 @dna_router.post("/analyze", summary="DNA Sequence Analysis")

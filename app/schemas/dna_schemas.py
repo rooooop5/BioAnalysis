@@ -19,7 +19,7 @@ class DNASequence(BaseModel):
 
 # -----model for the query params-------
 class DNAAnalysisOptions(BaseModel):
-    gc_content: bool
+    gc_fraction: bool
     nucleotide_count: bool
     reverse_compliment: bool
 
@@ -36,5 +36,6 @@ class DNAAnalysisResponse(BaseModel):
 
 
 class DNAValidityResponse(BaseModel):
+    detail:str
     is_valid: bool
     invalidity_reason: List[DNAInvalidReasons] | None = None

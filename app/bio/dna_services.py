@@ -27,15 +27,15 @@ def dna_validity(dna:DNASequence):
     if len(req)==0:
         invalidity_reason.append("empty sequence")
         is_valid=False
-    return {"is_valid":is_valid,"invalidity_reason":invalidity_reason}
+    return {"detail":"DNA sequence is invalid","is_valid":is_valid,"invalidity_reason":invalidity_reason}
 
     
 def analyze_dna(req:str,options:DNAAnalysisOptions):
     dna=Seq(req)
     res={}
     res["length"]=len(dna)
-    if options.gc_content:
-        res["gc_content"]=gc_fraction(dna)
+    if options.gc_fraction:
+        res["gc_fraction"]=gc_fraction(dna)
     if options.nucleotide_count:
         base_counts={}
         base_counts["A"]=dna.count("A")
