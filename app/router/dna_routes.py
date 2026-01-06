@@ -1,19 +1,19 @@
 from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, Query, Depends,HTTPException
-from app.bio.dna_services import analyze_dna,dna_validity,rev_compliment,transcription
-from app.schemas.dna_schemas import DNAAnalysisOptions, DNAAnalysisResponse, DNASequence,DNAValidityResponse,DNAReverseCompliment,Strand
+from app.bio.dna_services import analyze_dna,dna_validity,rev_complement,transcription,complement,translation
+from app.schemas.dna_schemas import DNAAnalysisOptions, DNAAnalysisResponse, DNASequence,DNAValidityResponse,DNAReverseComplementResponse,Strand,DNATranscriptionResponse,DNAComplementResponse
 
 dna_invalid_exception=HTTPException(status_code=400,detail="Bad request, DNA sequence invalid")
 
 
-dna_router = APIRouter(prefix="/dna", tags=["DNA"])
+dna_router = APIRouter(prefix="/dna")
 
 
 @dna_router.post(
     "/check-validity",
     response_model=DNAValidityResponse,
-    summary="DNA Sequence Validity Check",
+    summary="DNA Sequence Validity Check",tags=["DNA - Validity"]
 )
 def check_validity(dna: DNASequence):
     reasons_dict=dna_validity(dna)
@@ -21,7 +21,7 @@ def check_validity(dna: DNASequence):
     return response
 
 
-@dna_router.post("/analyze", summary="DNA Sequence Analysis")
+@dna_router.post("/analyze",response_model=DNAAnalysisResponse,summary="DNA Sequence Analysis",tags=["DNA - Analysis"])
 def analysis(dna: DNASequence, options: DNAAnalysisOptions = Query(),validity:DNAValidityResponse=Depends(dna_validity)):
     if not validity["is_valid"]:
         raise dna_invalid_exception
@@ -29,15 +29,31 @@ def analysis(dna: DNASequence, options: DNAAnalysisOptions = Query(),validity:DN
     response=DNAAnalysisResponse.model_validate(res_dict)
     return response
 
-@dna_router.post("/reverse-compliment",summary="Reverse Compliment")
-def reverse_compliment(dna:DNASequence,validity:DNAValidityResponse=Depends(dna_validity)):
+@dna_router.post("/complement",response_model=DNAComplementResponse,tags=["DNA - Transformation"])
+def dna_complement(dna:DNASequence,validity:DNAValidityResponse=Depends(dna_validity)):
     if not validity["is_valid"]:
         raise dna_invalid_exception
-    res_dict=rev_compliment(dna.seq)
-    response=DNAReverseCompliment.model_validate(res_dict)
+    return complement(dna.seq)
+
+
+
+@dna_router.post("/reverse-complement",summary="Reverse Complement",tags=["DNA - Transformation"])
+def reverse_complement(dna:DNASequence,validity:DNAValidityResponse=Depends(dna_validity)):
+    if not validity["is_valid"]:
+        raise dna_invalid_exception
+    res_dict=rev_complement(dna.seq)
+    response=DNAReverseComplementResponse.model_validate(res_dict)
     return response
     
-@dna_router.post("/transcribe")
-def transcribe(dna:DNASequence,strand_type:Strand=Query()):
+@dna_router.post("/transcribe",tags=["DNA - Transcription and Translation"])
+def transcribe(dna:DNASequence,strand_type:Strand=Query(),validity:DNAValidityResponse=Depends(dna_validity)):
+    if not validity["is_valid"]:
+        raise dna_invalid_exception
     res_dict=transcription(dna.seq,strand_type)
-    return res_dict
+    response=DNATranscriptionResponse.model_validate(res_dict)
+    return response
+@dna_router.post("/translate",tags=["DNA - Transcription and Translation"])
+def translate(dna:DNASequence,validity:DNAValidityResponse=Depends(dna_validity)):
+    if not validity["is_valid"]:
+        raise dna_invalid_exception
+    return translation(dna.seq)

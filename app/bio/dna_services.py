@@ -1,4 +1,5 @@
 from Bio.SeqUtils import gc_fraction
+from Bio.Data import CodonTable
 from Bio.Seq import Seq
 from app.schemas.dna_schemas import DNASequence,DNAAnalysisOptions,Strand
 import re
@@ -15,17 +16,17 @@ def dna_validity(dna:DNASequence)->dict:
     seq=dna.seq
     is_valid=True
     invalidity_reason=[]
-    if re.findall(r"[^ATGC]",seq):
-        invalidity_reason.append("invalid character(s) present")
+    if set(seq)<={"A","G","C","T"}:
+        invalidity_reason.append("INVALID_CHARACTER_PRESENT")
         is_valid=False
     if re.search(r"\s",seq):
-        invalidity_reason.append("contains whitespace")
+        invalidity_reason.append("CONTAINS_WHITESPACE")
         is_valid=False
     if re.search(r"\d",seq):
-        invalidity_reason.append("non string input")
+        invalidity_reason.append("NON_STRING_INPUT")
         is_valid=False
     if len(seq)==0:
-        invalidity_reason.append("empty sequence")
+        invalidity_reason.append("EMPTY_SEQUENCE")
         is_valid=False
     return {"detail":"DNA sequence is invalid","is_valid":is_valid,"invalidity_reason":invalidity_reason}
 
@@ -48,12 +49,13 @@ def analyze_dna(seq:str,options:DNAAnalysisOptions)->dict:
     res["is_valid"]=dna_validity(dna)
     return res
 
-def rev_compliment(seq:str)->dict:
+def complement(seq:str):
     dna=Seq(seq)
-    res={}
-    res["original"]=seq
-    res["reverse_compliment"]=str(dna.reverse_complement())
-    return res
+    return {"original":seq,"complement":str(dna.complement())}
+
+def rev_complement(seq:str)->dict:
+    dna=Seq(seq)
+    return {"original":seq,"reverse_complement":str(dna.reverse_complement())}
 
 def transcription(seq:str,strand_type:Strand)->dict:
     dna=Seq(seq)
@@ -65,4 +67,11 @@ def transcription(seq:str,strand_type:Strand)->dict:
     else:
         transcribed_rna=dna.reverse_complement().transcribe()
     res["transcribed_rna"]=str(transcribed_rna)
+    return res
+def translation(seq:str):
+    dna=Seq(seq)
+    res={}
+    res["dna_strand"]=seq
+    translated_protein=dna.translate()
+    res["translated_protein"]=str(translated_protein)
     return res

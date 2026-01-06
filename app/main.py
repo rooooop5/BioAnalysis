@@ -2,8 +2,10 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 
 from app.router.dna_routes import dna_router
-
-app = FastAPI()
+desc="""
+# Bioanalysis allows you to do awesome stuff🚀
+"""
+app = FastAPI(description=desc)
 
 
 @app.exception_handler(HTTPException)

@@ -4,12 +4,12 @@ from enum import Enum
 from pydantic import BaseModel
 
 DNAInvalidReasons = Literal[
-    "invalid character(s) present",
-    "contains whitespace",
-    "non string input",
-    "empty sequence",
-    "sequence too short",
-    "length not multiple of three"
+    "INVALID_CHARACTER_PRESENT",
+    "CONTAINS_WHITESPACE",
+    "NON_STRING_INPUT",
+    "EMPTY_SEQUENCE",
+    "SEQUENCE_TOO_SHORT",
+    "LENGHT_NOT_MULTIPLE_OF_THREE"
 ]
 
 class Strand(str,Enum):
@@ -39,11 +39,17 @@ class DNAAnalysisResponse(BaseModel):
 
 # -----function signature for Shubh: def analyze_dna(seq:DNASequence,options:DNAAnalysisOptions)->dict
 
-
-class DNAReverseCompliment(BaseModel):
+class DNAComplementResponse(BaseModel):
     original:str
-    reverse_compliment:str
+    complement:str
+class DNAReverseComplementResponse(BaseModel):
+    original:str
+    reverse_complement:str
 
+class DNATranscriptionResponse(BaseModel):
+    dna_strand:str
+    dna_strand_type:str
+    transcribed_rna:str
 class DNAValidityResponse(BaseModel):
     detail:str
     is_valid: bool
