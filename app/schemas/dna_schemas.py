@@ -1,4 +1,5 @@
 from typing import List, Literal,Optional
+from enum import Enum
 
 from pydantic import BaseModel
 
@@ -10,6 +11,10 @@ DNAInvalidReasons = Literal[
     "sequence too short",
     "length not multiple of three"
 ]
+
+class Strand(str,Enum):
+    CODING='CODING'
+    TEMPLATE='TEMPLATE'
 
 
 # ----model of the dna seq request-----

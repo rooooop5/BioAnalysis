@@ -1,6 +1,6 @@
 from Bio.SeqUtils import gc_fraction
 from Bio.Seq import Seq
-from app.schemas.dna_schemas import DNASequence,DNAAnalysisOptions,DNAAnalysisResponse,DNAInvalidReasons
+from app.schemas.dna_schemas import DNASequence,DNAAnalysisOptions,Strand
 import re
 
 # DNAInvalidReasons = Literal[
@@ -53,4 +53,16 @@ def rev_compliment(seq:str)->dict:
     res={}
     res["original"]=seq
     res["reverse_compliment"]=str(dna.reverse_complement())
+    return res
+
+def transcription(seq:str,strand_type:Strand)->dict:
+    dna=Seq(seq)
+    res={}
+    res["dna_strand"]=seq
+    res["dna_strand_type"]=strand_type
+    if strand_type==Strand.CODING:
+        transcribed_rna=dna.transcribe()
+    else:
+        transcribed_rna=dna.reverse_complement().transcribe()
+    res["transcribed_rna"]=str(transcribed_rna)
     return res

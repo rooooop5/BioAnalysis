@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, Query, Depends,HTTPException
-from app.bio.dna_services import analyze_dna,dna_validity,rev_compliment
-from app.schemas.dna_schemas import DNAAnalysisOptions, DNAAnalysisResponse, DNASequence,DNAValidityResponse,DNAReverseCompliment
+from app.bio.dna_services import analyze_dna,dna_validity,rev_compliment,transcription
+from app.schemas.dna_schemas import DNAAnalysisOptions, DNAAnalysisResponse, DNASequence,DNAValidityResponse,DNAReverseCompliment,Strand
 
 dna_invalid_exception=HTTPException(status_code=400,detail="Bad request, DNA sequence invalid")
 
@@ -37,3 +37,7 @@ def reverse_compliment(dna:DNASequence,validity:DNAValidityResponse=Depends(dna_
     response=DNAReverseCompliment.model_validate(res_dict)
     return response
     
+@dna_router.post("/transcribe")
+def transcribe(dna:DNASequence,strand_type:Strand=Query()):
+    res_dict=transcription(dna.seq,strand_type)
+    return res_dict
