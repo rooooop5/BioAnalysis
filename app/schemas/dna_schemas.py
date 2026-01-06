@@ -35,7 +35,12 @@ class DNAAnalysisResponse(BaseModel):
 # -----function signature for Shubh: def analyze_dna(seq:DNASequence,options:DNAAnalysisOptions)->dict
 
 
+class DNAReverseCompliment(BaseModel):
+    original:str
+    reverse_compliment:str
+
 class DNAValidityResponse(BaseModel):
     detail:str
     is_valid: bool
-    invalidity_reason: List[DNAInvalidReasons] | None = None
+    invalidity_reason: Optional[List[DNAInvalidReasons]]=None
+

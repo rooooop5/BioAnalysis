@@ -1,9 +1,10 @@
 from typing import TYPE_CHECKING
 
-from fastapi import APIRouter, Query, Depends
-from app.bio.dna_services import analyze_dna,dna_validity
-from app.schemas.dna_schemas import DNAAnalysisOptions, DNAAnalysisResponse, DNASequence,DNAValidityResponse
+from fastapi import APIRouter, Query, Depends,HTTPException
+from app.bio.dna_services import analyze_dna,dna_validity,rev_compliment
+from app.schemas.dna_schemas import DNAAnalysisOptions, DNAAnalysisResponse, DNASequence,DNAValidityResponse,DNAReverseCompliment
 
+dna_invalid_exception=HTTPException(status_code=400,detail="Bad request, DNA sequence invalid")
 
 
 dna_router = APIRouter(prefix="/dna", tags=["DNA"])
@@ -16,14 +17,23 @@ dna_router = APIRouter(prefix="/dna", tags=["DNA"])
 )
 def check_validity(dna: DNASequence):
     reasons_dict=dna_validity(dna)
-    validity=DNAValidityResponse.model_validate(reasons_dict)
-    return validity
+    response=DNAValidityResponse.model_validate(reasons_dict)
+    return response
 
 
 @dna_router.post("/analyze", summary="DNA Sequence Analysis")
 def analysis(dna: DNASequence, options: DNAAnalysisOptions = Query(),validity:DNAValidityResponse=Depends(dna_validity)):
     if not validity["is_valid"]:
-        return validity
+        raise dna_invalid_exception
     res_dict=analyze_dna(dna.seq,options)
     response=DNAAnalysisResponse.model_validate(res_dict)
     return response
+
+@dna_router.post("/reverse-compliment",summary="Reverse Compliment")
+def reverse_compliment(dna:DNASequence,validity:DNAValidityResponse=Depends(dna_validity)):
+    if not validity["is_valid"]:
+        raise dna_invalid_exception
+    res_dict=rev_compliment(dna.seq)
+    response=DNAReverseCompliment.model_validate(res_dict)
+    return response
+    

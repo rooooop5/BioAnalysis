@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 
 from app.router.dna_routes import dna_router
@@ -7,7 +7,7 @@ app = FastAPI()
 
 
 @app.exception_handler(HTTPException)
-def handler(exception: HTTPException, req: Request):
+def handler(req: Request, exception: HTTPException):
     return JSONResponse(
         status_code=exception.status_code,
         content={"error": {"status_code": exception.status_code, "message": exception.detail, "path": req.url.path}},

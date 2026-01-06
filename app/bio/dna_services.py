@@ -11,27 +11,27 @@ import re
 #     "sequence too short",
 #     "length not multiple of three"
 # ]
-def dna_validity(dna:DNASequence):
-    req=dna.seq
+def dna_validity(dna:DNASequence)->dict:
+    seq=dna.seq
     is_valid=True
     invalidity_reason=[]
-    if re.findall(r"[^ATGC]",req):
+    if re.findall(r"[^ATGC]",seq):
         invalidity_reason.append("invalid character(s) present")
         is_valid=False
-    if re.search(r"\s",req):
+    if re.search(r"\s",seq):
         invalidity_reason.append("contains whitespace")
         is_valid=False
-    if re.search(r"\d",req):
+    if re.search(r"\d",seq):
         invalidity_reason.append("non string input")
         is_valid=False
-    if len(req)==0:
+    if len(seq)==0:
         invalidity_reason.append("empty sequence")
         is_valid=False
     return {"detail":"DNA sequence is invalid","is_valid":is_valid,"invalidity_reason":invalidity_reason}
 
     
-def analyze_dna(req:str,options:DNAAnalysisOptions):
-    dna=Seq(req)
+def analyze_dna(seq:str,options:DNAAnalysisOptions)->dict:
+    dna=Seq(seq)
     res={}
     res["length"]=len(dna)
     if options.gc_fraction:
@@ -45,5 +45,12 @@ def analyze_dna(req:str,options:DNAAnalysisOptions):
         res["nucleotide_count"]=base_counts
     if options.reverse_compliment:
         res["reverse_compliment"]=str(dna.reverse_complement())
-    res["is_valid"]=True
+    res["is_valid"]=dna_validity(dna)
+    return res
+
+def rev_compliment(seq:str)->dict:
+    dna=Seq(seq)
+    res={}
+    res["original"]=seq
+    res["reverse_compliment"]=str(dna.reverse_complement())
     return res
