@@ -16,7 +16,7 @@ def dna_validity(dna:DNASequence)->dict:
     seq=dna.seq
     is_valid=True
     invalidity_reason=[]
-    if set(seq)<={"A","G","C","T"}:
+    if not set(seq)<={"A","G","C","T"}:
         invalidity_reason.append("INVALID_CHARACTER_PRESENT")
         is_valid=False
     if re.search(r"\s",seq):
@@ -28,7 +28,10 @@ def dna_validity(dna:DNASequence)->dict:
     if len(seq)==0:
         invalidity_reason.append("EMPTY_SEQUENCE")
         is_valid=False
-    return {"detail":"DNA sequence is invalid","is_valid":is_valid,"invalidity_reason":invalidity_reason}
+    if is_valid:
+        return {"detail":"DNA sequence is valid","is_valid":is_valid,"invalidity_reason":invalidity_reason}
+    else:
+        return {"detail":"DNA sequence is invalid","is_valid":is_valid,"invalidity_reason":invalidity_reason}
 
     
 def analyze_dna(seq:str,options:DNAAnalysisOptions)->dict:
@@ -44,9 +47,7 @@ def analyze_dna(seq:str,options:DNAAnalysisOptions)->dict:
         base_counts["G"]=dna.count("G")
         base_counts["C"]=dna.count("C")
         res["nucleotide_count"]=base_counts
-    if options.reverse_compliment:
-        res["reverse_compliment"]=str(dna.reverse_complement())
-    res["is_valid"]=dna_validity(dna)
+    res["is_valid"]=True
     return res
 
 def complement(seq:str):

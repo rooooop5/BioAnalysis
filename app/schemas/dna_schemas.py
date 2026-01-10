@@ -16,6 +16,13 @@ class Strand(str,Enum):
     CODING='CODING'
     TEMPLATE='TEMPLATE'
 
+class DNAPipelineSteps(str,Enum):
+    validate="VALIDATE"
+    reverse_complement="REVERSE COMPLEMENT"
+    complement="COMPLEMENT"
+    transcribe="TRANSCRIBE"
+    translate="TRANSLATE"
+    analyze="ANALYZE"
 
 # ----model of the dna seq request-----
 class DNASequence(BaseModel):
@@ -26,14 +33,12 @@ class DNASequence(BaseModel):
 class DNAAnalysisOptions(BaseModel):
     gc_fraction: bool
     nucleotide_count: bool
-    reverse_compliment: bool
 
 
 class DNAAnalysisResponse(BaseModel):
     length:int
     gc_fraction: Optional[float]=None
     nucleotide_count: Optional[dict]=None
-    reverse_compliment: Optional[str]=None
     is_valid: bool
 
 
@@ -54,4 +59,3 @@ class DNAValidityResponse(BaseModel):
     detail:str
     is_valid: bool
     invalidity_reason: Optional[List[DNAInvalidReasons]]=None
-
