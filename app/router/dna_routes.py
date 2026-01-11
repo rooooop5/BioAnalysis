@@ -8,6 +8,17 @@ dna_invalid_exception=HTTPException(status_code=400,detail="Bad request, DNA seq
 
 pipeline_steps={DNAPipelineSteps.validate:dna_validity,DNAPipelineSteps.reverse_complement:rev_complement,DNAPipelineSteps.complement:complement,DNAPipelineSteps.transcribe:transcription,DNAPipelineSteps.translate:translation,DNAPipelineSteps.analyze:analyze_dna}
 
+def handler(dna:DNASequence,strand_type:Strand,biofunction)->tuple:
+    if biofunction==dna_validity:
+        res=biofunction(dna)
+        if not res["is_valid"]:
+            res["detail"]="Pipeline stopped due to invalid dna"
+            return (res,True)
+    elif biofunction==transcription:
+        res=biofunction(dna.seq,strand_type)
+    else:
+        res=biofunction(dna.seq)
+    return (res,False)
 dna_router = APIRouter(prefix="/dna")
 
 
@@ -65,23 +76,10 @@ def pipeline(dna:DNASequence,steps:List[DNAPipelineSteps]=Query(),strand_type:St
     if DNAPipelineSteps.validate not in steps:
         steps.insert(0,DNAPipelineSteps.validate)
     for step in steps:
-        if step==DNAPipelineSteps.validate:
-            validitiy_response=dna_validity(dna)
-            res["validity"]=validitiy_response
-            if not validitiy_response["is_valid"]:
-                res["detail"]="Pipeline stopped due to invalid dna"
-                return res
-        if step==DNAPipelineSteps.reverse_complement:
-            res["reverse_complement"]=(rev_complement(dna.seq))
-        if step==DNAPipelineSteps.complement:
-            res["complement"]=(complement(dna.seq))
-        if step==DNAPipelineSteps.transcribe:
-            res["transcribe"]=(transcription(dna.seq,strand_type))
-        if step==DNAPipelineSteps.translate:
-            res["translate"]=(translation(dna.seq))
-        if step==DNAPipelineSteps.analyze:
-            options=DNAAnalysisOptions.model_validate({"gc_fraction":True,"nucleotide_count":True})
-            res["analyze"]=(analyze_dna(dna.seq,options))
+        biofuntion=pipeline_steps[step]
+        res_dict,stop=handler(dna,strand_type,biofuntion)
+        res[step]=res_dict
+        if stop:
+            break
     return res
-        
            
