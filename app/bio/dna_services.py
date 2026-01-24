@@ -33,18 +33,16 @@ def dna_validity(dna:str)->dict:
         return {"detail":"DNA sequence is invalid","is_valid":is_valid,"invalidity_reason":invalidity_reason}
 
     
-def analyze_dna(dna:Seq,options:DNAAnalysisOptions)->dict:
+def analyze_dna(dna:Seq)->dict:
     res={}
     res["length"]=len(dna)
-    if options.gc_fraction:
-        res["gc_fraction"]=gc_fraction(dna)
-    if options.nucleotide_count:
-        base_counts={}
-        base_counts["A"]=dna.count("A")
-        base_counts["T"]=dna.count("T")
-        base_counts["G"]=dna.count("G")
-        base_counts["C"]=dna.count("C")
-        res["nucleotide_count"]=base_counts
+    res["gc_fraction"]=gc_fraction(dna)
+    base_counts={}
+    base_counts["A"]=dna.count("A")
+    base_counts["T"]=dna.count("T")
+    base_counts["G"]=dna.count("G")
+    base_counts["C"]=dna.count("C")
+    res["nucleotide_count"]=base_counts
     res["is_valid"]=True
     return res
 

@@ -24,15 +24,19 @@ class DNAPipelineSteps(str,Enum):
     translate="TRANSLATE"
     analyze="ANALYZE"
 
+class InvocationSource(str,Enum):
+    pipeline="PIPELINE"
+    endpoint="ENDPOINT"
+
 # ----model of the dna seq request-----
 class DNASequence(BaseModel):
     seq: str
 
 
 # -----model for the query params-------
-class DNAAnalysisOptions(BaseModel):
-    gc_fraction: bool
-    nucleotide_count: bool
+class DNAAnalysisOptions(str,Enum):
+    gc_fraction= "GC FRACTION"
+    nucleotide_count="NUCLEOTIDE COUNT"
 
 
 class DNAAnalysisResponse(BaseModel):
@@ -65,10 +69,10 @@ class DNAValidityResponse(BaseModel):
     invalidity_reason: Optional[List[DNAInvalidReasons]]=None
 
 class DNAPipelineContext():
-    def __init__(self,dna:DNASequence,strand_type:Optional[Strand]=None,analysis_options:Optional[DNAAnalysisOptions]=None):
+    def __init__(self,dna:DNASequence,invocation_source:InvocationSource,strand_type:Optional[Strand]=None):
         self.dna:Seq=Seq(dna.seq)
         self.strand_type:Optional[Strand]=strand_type
-        self.analysis_options:Optional[DNAAnalysisOptions]=analysis_options
+        self.invocation_source:InvocationSource=invocation_source
         self.stop_pipeline:bool=False
         self.result:dict=None 
         self.error:dict=None
