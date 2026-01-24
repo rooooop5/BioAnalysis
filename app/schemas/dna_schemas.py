@@ -1,6 +1,6 @@
 from typing import List, Literal,Optional
 from enum import Enum
-
+from Bio.Seq import Seq
 from pydantic import BaseModel
 
 DNAInvalidReasons = Literal[
@@ -55,7 +55,20 @@ class DNATranscriptionResponse(BaseModel):
     dna_strand:str
     dna_strand_type:str
     transcribed_rna:str
+
+class DNATranslationResponse(BaseModel):
+    dna_strand:str
+    translated_protein:str
 class DNAValidityResponse(BaseModel):
     detail:str
     is_valid: bool
     invalidity_reason: Optional[List[DNAInvalidReasons]]=None
+
+class DNAPipelineContext():
+    def __init__(self,dna:DNASequence,strand_type:Optional[Strand]=None,analysis_options:Optional[DNAAnalysisOptions]=None):
+        self.dna:Seq=Seq(dna.seq)
+        self.strand_type:Optional[Strand]=strand_type
+        self.analysis_options:Optional[DNAAnalysisOptions]=analysis_options
+        self.stop_pipeline:bool=False
+        self.result:dict=None 
+        self.error:dict=None

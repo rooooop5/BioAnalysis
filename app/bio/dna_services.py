@@ -12,20 +12,19 @@ import re
 #     "sequence too short",
 #     "length not multiple of three"
 # ]
-def dna_validity(dna:DNASequence)->dict:
-    seq=dna.seq
+def dna_validity(dna:str)->dict:
     is_valid=True
     invalidity_reason=[]
-    if not set(seq)<={"A","G","C","T"}:
+    if not set(dna)<={"A","G","C","T"}:
         invalidity_reason.append("INVALID_CHARACTER_PRESENT")
         is_valid=False
-    if re.search(r"\s",seq):
+    if re.search(r"\s",dna):
         invalidity_reason.append("CONTAINS_WHITESPACE")
         is_valid=False
-    if re.search(r"\d",seq):
+    if re.search(r"\d",dna):
         invalidity_reason.append("NON_STRING_INPUT")
         is_valid=False
-    if len(seq)==0:
+    if len(dna)==0:
         invalidity_reason.append("EMPTY_SEQUENCE")
         is_valid=False
     if is_valid:
@@ -34,8 +33,7 @@ def dna_validity(dna:DNASequence)->dict:
         return {"detail":"DNA sequence is invalid","is_valid":is_valid,"invalidity_reason":invalidity_reason}
 
     
-def analyze_dna(seq:str,options:DNAAnalysisOptions)->dict:
-    dna=Seq(seq)
+def analyze_dna(dna:Seq,options:DNAAnalysisOptions)->dict:
     res={}
     res["length"]=len(dna)
     if options.gc_fraction:
@@ -50,18 +48,15 @@ def analyze_dna(seq:str,options:DNAAnalysisOptions)->dict:
     res["is_valid"]=True
     return res
 
-def complement(seq:str):
-    dna=Seq(seq)
-    return {"original":seq,"complement":str(dna.complement())}
+def complement(dna:Seq):
+    return {"original":str(dna),"complement":str(dna.complement())}
 
-def rev_complement(seq:str)->dict:
-    dna=Seq(seq)
-    return {"original":seq,"reverse_complement":str(dna.reverse_complement())}
+def rev_complement(dna:Seq)->dict:
+    return {"original":str(dna),"reverse_complement":str(dna.reverse_complement())}
 
-def transcription(seq:str,strand_type:Strand)->dict:
-    dna=Seq(seq)
+def transcription(dna:Seq,strand_type:Strand)->dict:
     res={}
-    res["dna_strand"]=seq
+    res["dna_strand"]=str(dna)
     res["dna_strand_type"]=strand_type
     if strand_type==Strand.CODING:
         transcribed_rna=dna.transcribe()
@@ -69,10 +64,9 @@ def transcription(seq:str,strand_type:Strand)->dict:
         transcribed_rna=dna.reverse_complement().transcribe()
     res["transcribed_rna"]=str(transcribed_rna)
     return res
-def translation(seq:str):
-    dna=Seq(seq)
+def translation(dna:Seq):
     res={}
-    res["dna_strand"]=seq
+    res["dna_strand"]=str(dna)
     translated_protein=dna.translate()
     res["translated_protein"]=str(translated_protein)
     return res

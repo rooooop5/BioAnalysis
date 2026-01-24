@@ -1,24 +1,12 @@
 from typing import List
-
-from fastapi import APIRouter, Query, Depends,HTTPException
+from fastapi import APIRouter, Query, Depends,HTTPException,Body
 from app.bio.dna_services import analyze_dna,dna_validity,rev_complement,transcription,complement,translation
-from app.schemas.dna_schemas import DNAAnalysisOptions, DNAAnalysisResponse, DNASequence,DNAValidityResponse,DNAReverseComplementResponse,Strand,DNATranscriptionResponse,DNAComplementResponse,DNAPipelineSteps
+from app.schemas.dna_schemas import DNAAnalysisOptions, DNAAnalysisResponse, DNASequence,DNAValidityResponse,DNAPipelineContext,DNAReverseComplementResponse,Strand,DNATranscriptionResponse,DNAComplementResponse,DNAPipelineSteps,DNATranslationResponse
+from app.pipelines.dna_engine import dna_engine
 
 dna_invalid_exception=HTTPException(status_code=400,detail="Bad request, DNA sequence invalid")
 
-pipeline_steps={DNAPipelineSteps.validate:dna_validity,DNAPipelineSteps.reverse_complement:rev_complement,DNAPipelineSteps.complement:complement,DNAPipelineSteps.transcribe:transcription,DNAPipelineSteps.translate:translation,DNAPipelineSteps.analyze:analyze_dna}
 
-def handler(dna:DNASequence,strand_type:Strand,biofunction)->tuple:
-    if biofunction==dna_validity:
-        res=biofunction(dna)
-        if not res["is_valid"]:
-            res["detail"]="Pipeline stopped due to invalid dna"
-            return (res,True)
-    elif biofunction==transcription:
-        res=biofunction(dna.seq,strand_type)
-    else:
-        res=biofunction(dna.seq)
-    return (res,False)
 dna_router = APIRouter(prefix="/dna")
 
 
@@ -28,58 +16,55 @@ dna_router = APIRouter(prefix="/dna")
     summary="DNA Sequence Validity Check",tags=["DNA - Validity"]
 )
 def check_validity(dna: DNASequence):
-    reasons_dict=dna_validity(dna)
-    response=DNAValidityResponse.model_validate(reasons_dict)
+    ctx=DNAPipelineContext(dna=dna)
+    dna_engine(ctx=ctx,steps_list=[DNAPipelineSteps.validate])
+    response=DNAValidityResponse.model_validate(ctx.result)
     return response
 
 
 @dna_router.post("/analyze",response_model=DNAAnalysisResponse,summary="DNA Sequence Analysis",tags=["DNA - Analysis"])
-def analysis(dna: DNASequence, options: DNAAnalysisOptions = Query(),validity:DNAValidityResponse=Depends(dna_validity)):
-    if not validity["is_valid"]:
+def analysis(dna: DNASequence=Body(), options: DNAAnalysisOptions=Query(),validity:DNAValidityResponse=Depends(check_validity)):
+    if not validity.is_valid:
         raise dna_invalid_exception
-    res_dict=analyze_dna(dna.seq,options)
-    response=DNAAnalysisResponse.model_validate(res_dict)
+    ctx=DNAPipelineContext(dna=dna,analysis_options=options)
+    dna_engine(ctx=ctx,steps_list=[DNAPipelineSteps.analyze])
+    response=DNAAnalysisResponse.model_validate(ctx.result)
     return response
 
 @dna_router.post("/complement",response_model=DNAComplementResponse,tags=["DNA - Transformation"])
-def dna_complement(dna:DNASequence,validity:DNAValidityResponse=Depends(dna_validity)):
-    if not validity["is_valid"]:
+def dna_complement(dna:DNASequence,validity:DNAValidityResponse=Depends(check_validity)):
+    if not validity.is_valid:
         raise dna_invalid_exception
-    return complement(dna.seq)
+    ctx=DNAPipelineContext(dna=dna)
+    dna_engine(ctx=ctx,steps_list=[DNAPipelineSteps.complement])
+    response=DNAComplementResponse.model_validate(ctx.result)
+    return response
 
 
 
 @dna_router.post("/reverse-complement",summary="Reverse Complement",tags=["DNA - Transformation"])
-def reverse_complement(dna:DNASequence,validity:DNAValidityResponse=Depends(dna_validity)):
-    if not validity["is_valid"]:
+def reverse_complement(dna:DNASequence,validity:DNAValidityResponse=Depends(check_validity)):
+    if not validity.is_valid:
         raise dna_invalid_exception
-    res_dict=rev_complement(dna.seq)
-    response=DNAReverseComplementResponse.model_validate(res_dict)
+    ctx=DNAPipelineContext(dna=dna)
+    dna_engine(ctx=ctx,steps_list=[DNAPipelineSteps.reverse_complement])
+    response=DNAReverseComplementResponse.model_validate(ctx.result)
     return response
     
 @dna_router.post("/transcribe",tags=["DNA - Transcription and Translation"])
-def transcribe(dna:DNASequence,strand_type:Strand=Query(),validity:DNAValidityResponse=Depends(dna_validity)):
-    if not validity["is_valid"]:
+def transcribe(dna:DNASequence,strand_type:Strand=Query(),validity:DNAValidityResponse=Depends(check_validity)):
+    if not validity.is_valid:
         raise dna_invalid_exception
-    res_dict=transcription(dna.seq,strand_type)
-    response=DNATranscriptionResponse.model_validate(res_dict)
+    ctx=DNAPipelineContext(dna=dna,strand_type=strand_type)
+    dna_engine(ctx=ctx,steps_list=[DNAPipelineSteps.transcribe])
+    response=DNATranscriptionResponse.model_validate(ctx.result)
     return response
-@dna_router.post("/translate",tags=["DNA - Transcription and Translation"])
-def translate(dna:DNASequence,validity:DNAValidityResponse=Depends(dna_validity)):
-    if not validity["is_valid"]:
-        raise dna_invalid_exception
-    return translation(dna.seq)
 
-@dna_router.post("/pipeline")
-def pipeline(dna:DNASequence,steps:List[DNAPipelineSteps]=Query(),strand_type:Strand=Query()):
-    res={}
-    if DNAPipelineSteps.validate not in steps:
-        steps.insert(0,DNAPipelineSteps.validate)
-    for step in steps:
-        biofuntion=pipeline_steps[step]
-        res_dict,stop=handler(dna,strand_type,biofuntion)
-        res[step]=res_dict
-        if stop:
-            break
-    return res
-           
+@dna_router.post("/translate",tags=["DNA - Transcription and Translation"])
+def translate(dna:DNASequence,validity:DNAValidityResponse=Depends(check_validity)):
+    if not validity.is_valid:
+        raise dna_invalid_exception
+    ctx=DNAPipelineContext(dna=dna)
+    dna_engine(ctx=ctx,steps_list=[DNAPipelineSteps.translate])
+    response=DNATranslationResponse.model_validate(ctx.result)
+    return response
