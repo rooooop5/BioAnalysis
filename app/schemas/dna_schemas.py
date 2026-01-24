@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import List, Literal, Optional
-
+from fastapi import HTTPException
 from Bio.Seq import Seq
 from pydantic import BaseModel
 
@@ -58,7 +58,7 @@ class DNAComplementResponse(BaseModel):
     original: str
     complement: str
 
-
+dna_invalid_exception = HTTPException(status_code=400, detail="Bad request, DNA sequence invalid")
 class DNAReverseComplementResponse(BaseModel):
     original: str
     reverse_complement: str

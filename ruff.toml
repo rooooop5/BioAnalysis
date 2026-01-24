@@ -1,0 +1,11 @@
+# Set max line length
+line-length = 120
+
+[format]
+quote-style = "single"
+skip-magic-trailing-comma = true
+
+
+[lint]
+# enable errors, pyflakes, warnings, isort
+select = ["E", "F", "W", "I"]

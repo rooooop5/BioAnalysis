@@ -1,15 +1,10 @@
-from typing import List
 from app.bio.dna_services import analyze_dna, dna_validity, rev_complement, transcription, complement, translation
 from app.schemas.dna_schemas import DNAPipelineContext, DNAPipelineSteps, InvocationSource
-from Bio.Seq import Seq
 
 
 def validation_step(ctx: DNAPipelineContext):
     dna = str(ctx.dna)
-    validity = dna_validity(dna)
-    if not validity["is_valid"]:
-        ctx.stop_pipeline = True
-    return validity
+    return dna_validity(dna)
 
 
 def complement_step(ctx: DNAPipelineContext):
@@ -55,6 +50,6 @@ def dna_engine(ctx: DNAPipelineContext, steps_list):
         step_result = biofunction(ctx)
         if ctx.invocation_source == InvocationSource.pipeline:
             (ctx.result).update(pipeline_handler(step_result=step_result, step=step))
-        else:
+        if ctx.invocation_source == InvocationSource.endpoint:
             ctx.result = step_result
         print(ctx.result)
