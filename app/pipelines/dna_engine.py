@@ -1,47 +1,60 @@
 from typing import List
-from app.bio.dna_services import analyze_dna,dna_validity,rev_complement,transcription,complement,translation
-from app.schemas.dna_schemas import DNAPipelineContext,DNAPipelineSteps,InvocationSource
+from app.bio.dna_services import analyze_dna, dna_validity, rev_complement, transcription, complement, translation
+from app.schemas.dna_schemas import DNAPipelineContext, DNAPipelineSteps, InvocationSource
 from Bio.Seq import Seq
-def validation_step(ctx:DNAPipelineContext):
-    dna=str(ctx.dna)
-    validity=dna_validity(dna)
+
+
+def validation_step(ctx: DNAPipelineContext):
+    dna = str(ctx.dna)
+    validity = dna_validity(dna)
     if not validity["is_valid"]:
-        ctx.stop_pipeline=True
+        ctx.stop_pipeline = True
     return validity
 
-def complement_step(ctx:DNAPipelineContext):
+
+def complement_step(ctx: DNAPipelineContext):
     return complement(ctx.dna)
 
-def reverse_complement_step(ctx:DNAPipelineContext):
+
+def reverse_complement_step(ctx: DNAPipelineContext):
     return rev_complement(ctx.dna)
 
-def transcription_step(ctx:DNAPipelineContext):
-    return transcription(ctx.dna,ctx.strand_type)
 
-def translation_step(ctx:DNAPipelineContext):
+def transcription_step(ctx: DNAPipelineContext):
+    return transcription(ctx.dna, ctx.strand_type)
+
+
+def translation_step(ctx: DNAPipelineContext):
     return translation(ctx.dna)
 
-def analyzation_step(ctx:DNAPipelineContext):
+
+def analyzation_step(ctx: DNAPipelineContext):
     return analyze_dna(ctx.dna)
-    
 
-mapping={DNAPipelineSteps.validate:validation_step,DNAPipelineSteps.reverse_complement:reverse_complement_step,DNAPipelineSteps.complement:complement_step,DNAPipelineSteps.transcribe:transcription_step,DNAPipelineSteps.translate:translation_step,DNAPipelineSteps.analyze:analyzation_step}
 
-def pipeline_handler(step_result,step):
-    pipeline_result={}
-    pipeline_result[step]=step_result
+mapping = {
+    DNAPipelineSteps.validate: validation_step,
+    DNAPipelineSteps.reverse_complement: reverse_complement_step,
+    DNAPipelineSteps.complement: complement_step,
+    DNAPipelineSteps.transcribe: transcription_step,
+    DNAPipelineSteps.translate: translation_step,
+    DNAPipelineSteps.analyze: analyzation_step,
+}
+
+
+def pipeline_handler(step_result, step):
+    pipeline_result = {}
+    pipeline_result[step] = step_result
     return pipeline_result
 
-def dna_engine(ctx:DNAPipelineContext,steps_list):
-    ctx.result={}
+
+def dna_engine(ctx: DNAPipelineContext, steps_list):
+    ctx.result = {}
     for step in steps_list:
-        biofunction=mapping[step]
-        step_result=biofunction(ctx)
-        if ctx.invocation_source==InvocationSource.pipeline:
-            (ctx.result).update(pipeline_handler(step_result=step_result,step=step))
+        biofunction = mapping[step]
+        step_result = biofunction(ctx)
+        if ctx.invocation_source == InvocationSource.pipeline:
+            (ctx.result).update(pipeline_handler(step_result=step_result, step=step))
         else:
-            ctx.result=step_result
+            ctx.result = step_result
         print(ctx.result)
-
-
-
