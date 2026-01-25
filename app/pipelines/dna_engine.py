@@ -4,7 +4,11 @@ from app.schemas.dna_schemas import DNAPipelineContext, DNAPipelineSteps, Invoca
 
 def validation_step(ctx: DNAPipelineContext):
     dna = str(ctx.dna)
-    return dna_validity(dna)
+    result=dna_validity(dna)
+    if not result["is_valid"]:
+        ctx.stop_pipeline=True
+        ctx.error=result["detail"]
+    return result
 
 
 def complement_step(ctx: DNAPipelineContext):
@@ -45,11 +49,17 @@ def pipeline_handler(step_result, step):
 
 def dna_engine(ctx: DNAPipelineContext, steps_list):
     ctx.result = {}
+    if DNAPipelineSteps.validate not in steps_list:
+        steps_list.insert(0,DNAPipelineSteps.validate)
+        ctx.result["message"]="Auto added validation step"
     for step in steps_list:
         biofunction = mapping[step]
         step_result = biofunction(ctx)
         if ctx.invocation_source == InvocationSource.pipeline:
             (ctx.result).update(pipeline_handler(step_result=step_result, step=step))
+            if ctx.stop_pipeline:
+                stop_message={"message":"Pipeline stopped","error_message":ctx.error,"Pipeline stopped at step":step}
+                ctx.result["PIPELINE STOPPED"]=stop_message
+                break
         if ctx.invocation_source == InvocationSource.endpoint:
             ctx.result = step_result
-        print(ctx.result)
