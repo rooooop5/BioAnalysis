@@ -52,8 +52,6 @@ def analysis_endpoint(dna: DNASequence = Body(), _: DNAValidityResponse = Depend
 
 @dna_router.post('/complement', response_model=DNAComplementResponse, tags=['DNA - Transformation'])
 def complement_endpoint(dna: DNASequence, validity: DNAValidityResponse = Depends(check_validity)):
-    if not validity.is_valid:
-        raise dna_invalid_exception
     ctx = DNAPipelineContext(dna=dna, invocation_source=InvocationSource.endpoint)
     dna_engine(ctx=ctx, steps_list=[DNAPipelineSteps.complement])
     response = DNAComplementResponse.model_validate(ctx.result)
@@ -62,8 +60,6 @@ def complement_endpoint(dna: DNASequence, validity: DNAValidityResponse = Depend
 
 @dna_router.post('/reverse-complement', summary='Reverse Complement', tags=['DNA - Transformation'])
 def reverse_complement_endpoint(dna: DNASequence, validity: DNAValidityResponse = Depends(check_validity)):
-    if not validity.is_valid:
-        raise dna_invalid_exception
     ctx = DNAPipelineContext(dna=dna, invocation_source=InvocationSource.endpoint)
     dna_engine(ctx=ctx, steps_list=[DNAPipelineSteps.reverse_complement])
     response = DNAReverseComplementResponse.model_validate(ctx.result)
@@ -74,8 +70,6 @@ def reverse_complement_endpoint(dna: DNASequence, validity: DNAValidityResponse 
 def transcription_endpoint(
     dna: DNASequence, strand_type: Strand = Query(), validity: DNAValidityResponse = Depends(check_validity)
 ):
-    if not validity.is_valid:
-        raise dna_invalid_exception
     ctx = DNAPipelineContext(dna=dna, invocation_source=InvocationSource.endpoint, strand_type=strand_type)
     dna_engine(ctx=ctx, steps_list=[DNAPipelineSteps.transcribe])
     response = DNATranscriptionResponse.model_validate(ctx.result)
@@ -84,8 +78,6 @@ def transcription_endpoint(
 
 @dna_router.post('/translate', tags=['DNA - Transcription and Translation'])
 def translation_endpoint(dna: DNASequence, validity: DNAValidityResponse = Depends(check_validity)):
-    if not validity.is_valid:
-        raise dna_invalid_exception
     ctx = DNAPipelineContext(dna=dna, invocation_source=InvocationSource.endpoint)
     dna_engine(ctx=ctx, steps_list=[DNAPipelineSteps.translate])
     response = DNATranslationResponse.model_validate(ctx.result)

@@ -1,4 +1,4 @@
-from app.bio.dna_services import analyze_dna, dna_validity, rev_complement, transcription, complement, translation
+from app.bio.basic_dna_services import analyze_dna, dna_validity, rev_complement, transcription, complement, translation
 from app.schemas.dna_schemas import DNAPipelineContext, DNAPipelineSteps, InvocationSource
 
 
