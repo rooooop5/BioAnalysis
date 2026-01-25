@@ -39,7 +39,7 @@ def analyze_dna(dna: Seq) -> dict:
     return res
 
 
-def complement(dna: Seq):
+def complement(dna: Seq) -> dict:
     return {"original": str(dna), "complement": str(dna.complement())}
 
 
@@ -59,7 +59,7 @@ def transcription(dna: Seq, strand_type: Strand) -> dict:
     return res
 
 
-def translation(dna: Seq):
+def translation(dna: Seq) -> dict:
     res = {}
     res["dna_strand"] = str(dna)
     translated_protein = dna.translate()
