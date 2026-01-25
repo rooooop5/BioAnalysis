@@ -4,15 +4,6 @@ from Bio.Seq import Seq
 from app.schemas.dna_schemas import DNASequence, DNAAnalysisOptions, Strand
 import re
 
-
-# DNAInvalidReasons = Literal[
-#     "invalid character",
-#     "contains whitespace",
-#     "non string input",
-#     "empty sequence",
-#     "sequence too short",
-#     "length not multiple of three"
-# ]
 def dna_validity(dna: str) -> dict:
     is_valid = True
     invalidity_reason = []
