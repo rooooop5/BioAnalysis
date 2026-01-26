@@ -1,7 +1,7 @@
 from Bio.SeqUtils import gc_fraction
 from Bio.Data import CodonTable
 from Bio.Seq import Seq
-from app.schemas.dna_schemas import DNASequence, DNAAnalysisOptions, Strand
+from app.schemas.dna_schemas import DNASequence, DNAAnalysisOptions, StrandTranscriptionRole
 import re
 
 def dna_validity(dna: str) -> dict:
@@ -47,11 +47,11 @@ def rev_complement(dna: Seq) -> dict:
     return {"original": str(dna), "reverse_complement": str(dna.reverse_complement())}
 
 
-def transcription(dna: Seq, strand_type: Strand) -> dict:
+def transcription(dna: Seq, strand_type: StrandTranscriptionRole) -> dict:
     res = {}
     res["dna_strand"] = str(dna)
     res["dna_strand_type"] = strand_type
-    if strand_type == Strand.CODING:
+    if strand_type == StrandTranscriptionRole.CODING:
         transcribed_rna = dna.transcribe()
     else:
         transcribed_rna = dna.reverse_complement().transcribe()

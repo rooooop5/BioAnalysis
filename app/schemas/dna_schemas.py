@@ -14,7 +14,7 @@ DNAInvalidReasons = Literal[
 ]
 
 
-class Strand(str, Enum):
+class StrandTranscriptionRole(str, Enum):
     CODING = "CODING"
     TEMPLATE = "TEMPLATE"
 

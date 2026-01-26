@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 
 from app.router.dna_routes import dna_router
+from app.router.central_dogma_routes import cd_router
 
 desc = """
 # Bioanalysis allows you to do awesome stuff🚀
@@ -24,3 +25,4 @@ def handler(req: Request, exception: HTTPException):
 
 
 app.include_router(dna_router)
+app.include_router(cd_router)
