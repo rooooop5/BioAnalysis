@@ -13,6 +13,14 @@ class StrandPolarity(str, Enum):
     forward = '5_3'
     reverse = '3_5'
 
+class RhoIndependentTerminator():
+    min_stem_gc_fraction=0.65
+    stem_length={"min":6,"max":8}
+    poly_tail_pattern=[r"(TTTTTT){s<=1}",r"(TTTTTTT){s<=2}",r"(TTTTTTTT){s<=2}" ]
+    loop_length={"min":3,"max":8}
+
+    
+
 class FindPromoterResponse(BaseModel):
     found:bool
     coding_strand:str|None
