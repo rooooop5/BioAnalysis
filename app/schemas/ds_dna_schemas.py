@@ -15,9 +15,9 @@ class StrandPolarity(str, Enum):
 
 class RhoIndependentTerminator():
     min_stem_gc_fraction=0.65
-    stem_length={"min":6,"max":8}
-    poly_tail_pattern=[r"(TTTTTT){s<=1}",r"(TTTTTTT){s<=2}",r"(TTTTTTTT){s<=2}" ]
-    loop_length={"min":3,"max":8}
+    stem_length=(6,7,8)
+    poly_tail_pattern=[r"(TTTTTTTT){s<=2}",r"(TTTTTTT){s<=2}",r"(TTTTTT){s<=1}" ]
+    loop_length=(3,4,5,6,7,8)
 
     
 
