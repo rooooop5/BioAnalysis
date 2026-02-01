@@ -1,7 +1,13 @@
 import regex
 from Bio.Seq import Seq
 from Bio.SeqUtils import gc_fraction
-from app.schemas.ds_dna_schemas import DoubleStrandedDNA, Sigma70Promoter, RhoIndependentTerminator, TerminatorHit
+from app.schemas.ds_dna_schemas import (
+    DoubleStrandedDNA,
+    Sigma70Promoter,
+    RhoIndependentTerminator,
+    TerminatorHit,
+    TranscriptionTerminatorScoringConfig,
+)
 
 
 def find_promoter(dna: DoubleStrandedDNA):
@@ -17,14 +23,26 @@ def find_promoter(dna: DoubleStrandedDNA):
 def terminator_strength(stem_tuple, loop_len, poly_t_match):
     left_stem, right_stem = stem_tuple
     right_stem_rc = str(Seq(right_stem).reverse_complement())
-    stem_len_score = (len(left_stem + right_stem) / 20) * 0.59
-    gc_fraction_score = gc_fraction((left_stem + right_stem)) * 0.26
-    loop_len_score = (
-        (len(RhoIndependentTerminator.loop_length) - RhoIndependentTerminator.loop_length.index(loop_len)) / 6 * 0.06
+    stem_len_score = (
+        len(left_stem + right_stem) / TranscriptionTerminatorScoringConfig.MAX_STEM_LENGTH
+    ) * TranscriptionTerminatorScoringConfig.STEM_LENGTH_SCORE_WEIGHT
+    gc_fraction_score = (
+        gc_fraction((left_stem + right_stem)) * TranscriptionTerminatorScoringConfig.GC_FRACTION_SCORE_WEIGHT
     )
-    poly_t_len_score = len(poly_t_match.group()) / 8 * 0.09
+    poly_t_len_score = (
+        len(poly_t_match.group())
+        / TranscriptionTerminatorScoringConfig.MAX_POLY_T_LENGTH
+        * TranscriptionTerminatorScoringConfig.POLY_T_LENGTH_SCORE_WEIGHT
+    )
+    loop_len_score = (
+        (len(RhoIndependentTerminator.loop_length) - RhoIndependentTerminator.loop_length.index(loop_len))
+        / TranscriptionTerminatorScoringConfig.MAX_LOOP_LENGTH_SCORE
+        * TranscriptionTerminatorScoringConfig.LOOP_LENGTH_SCORE_WIEGHT
+    )
+
     stem_mismatches = sum(1 for left_base, right_base in zip(left_stem, right_stem_rc) if left_base != right_base)
-    stem_mismatch_penalty = stem_mismatches / len(left_stem)
+    stem_mismatch_penalty = stem_mismatches / len(left_stem)*0.40
+    print("penalty-",stem_mismatch_penalty, "mismatch - ",stem_mismatches)
     terminator_strength = stem_len_score + gc_fraction_score + loop_len_score + poly_t_len_score - stem_mismatch_penalty
     return terminator_strength
 
