@@ -21,6 +21,21 @@ class RhoIndependentTerminator():
     loop_length=(3,4,5,6,7,8)
 
     
+class TerminatorHit():
+    def __init__(self,score,poly_t_match,loop_length,stem):
+        self.score=score
+        self.start=poly_t_match.start()-loop_length-2*len(stem[0])
+        self.end=poly_t_match.end()
+        self.poly_t=poly_t_match.group()
+        self.stem={"left_stem":stem[0],"right_stem":stem[1]}
+        self.loop_length=loop_length
+    def to_dict(self):
+        return {"score":self.score,"start":self.start,"end":self.end,"poly_t":self.poly_t,"stem":self.stem,"loop_length":self.loop_length}
+
+class TerminatorHitResponse(BaseModel):
+    found:bool
+    terminator:dict
+
 
 class FindPromoterResponse(BaseModel):
     found:bool
