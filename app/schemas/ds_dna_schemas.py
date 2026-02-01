@@ -2,20 +2,21 @@ from pydantic import BaseModel
 from enum import Enum
 from app.schemas.dna_schemas import DNASequence,StrandTranscriptionRole
 from Bio.Seq import Seq
+from dataclasses import dataclass
 
-
+@dataclass
 class Sigma70Promoter:
     minus_35: str = r'(TTGACA){s<=1,i<=0,d<=0}'
     minus_10: str = r'(TATAAT){s<=1,i<=0,d<=0}'
     gap: str = r'.{16,18}'
-
+@dataclass
 class StrandPolarity(str, Enum):
     forward = '5_3'
     reverse = '3_5'
-
+@dataclass
 class RhoIndependentTerminator():
     min_stem_gc_fraction=0.65
-    stem_length=(6,7,8)
+    stem_length=(6,7,8,9,10)
     poly_tail_pattern=[r"(TTTTTTTT){s<=2}",r"(TTTTTTT){s<=2}",r"(TTTTTT){s<=1}" ]
     loop_length=(3,4,5,6,7,8)
 

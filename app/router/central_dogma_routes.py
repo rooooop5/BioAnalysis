@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from app.schemas.ds_dna_schemas import DoubleStrandedDNA,FindPromoterResponse
 from app.schemas.dna_schemas import DNASequence
-from app.bio.central_dogma_services import find_promoter,ds_transcription
+from app.bio.central_dogma_services import find_promoter,ds_transcription,find_stem,find_poly_tail
 cd_router=APIRouter(prefix="/central-dogma")
 
 @cd_router.post('/find-promoter')
