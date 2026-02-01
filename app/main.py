@@ -14,13 +14,7 @@ app = FastAPI(description=desc)
 def handler(req: Request, exception: HTTPException):
     return JSONResponse(
         status_code=exception.status_code,
-        content={
-            "error": {
-                "status_code": exception.status_code,
-                "message": exception.detail,
-                "path": req.url.path,
-            }
-        },
+        content={'error': {'status_code': exception.status_code, 'message': exception.detail, 'path': req.url.path}},
     )
 
 
