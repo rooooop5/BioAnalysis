@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Query, Depends, HTTPException, Body
+from fastapi import APIRouter, Query, Depends, Body
 from app.schemas.dna_schemas import (
     DNAAnalysisResponse,
     DNASequence,
@@ -15,7 +15,7 @@ from app.schemas.dna_schemas import (
     dna_invalid_exception,
 )
 from app.pipelines.dna_engine import dna_engine
-from app.schemas.ds_dna_schemas import DoubleStrandedDNA,FindPromoterResponse
+from app.schemas.ds_dna_schemas import DoubleStrandedDNA, FindPromoterResponse
 from app.bio.central_dogma_services import find_promoter
 
 dna_router = APIRouter(prefix='/dna')
@@ -69,7 +69,9 @@ def reverse_complement_endpoint(dna: DNASequence, validity: DNAValidityResponse 
 
 @dna_router.post('/transcribe', tags=['DNA - Transcription and Translation'])
 def transcription_endpoint(
-    dna: DNASequence, strand_type: StrandTranscriptionRole = Query(), validity: DNAValidityResponse = Depends(check_validity)
+    dna: DNASequence,
+    strand_type: StrandTranscriptionRole = Query(),
+    validity: DNAValidityResponse = Depends(check_validity),
 ):
     ctx = DNAPipelineContext(dna=dna, invocation_source=InvocationSource.endpoint, strand_type=strand_type)
     dna_engine(ctx=ctx, steps_list=[DNAPipelineSteps.transcribe])
@@ -86,10 +88,11 @@ def translation_endpoint(dna: DNASequence, validity: DNAValidityResponse = Depen
 
 
 @dna_router.post('/pipeline')
-def pipeline(dna: DNASequence, steps: List[DNAPipelineSteps] = Query(), strand_type: StrandTranscriptionRole = Query(default=None)):
+def pipeline(
+    dna: DNASequence,
+    steps: List[DNAPipelineSteps] = Query(),
+    strand_type: StrandTranscriptionRole = Query(default=None),
+):
     ctx = DNAPipelineContext(dna=dna, invocation_source=InvocationSource.pipeline, strand_type=strand_type)
     dna_engine(ctx=ctx, steps_list=steps)
     return ctx.result
-
-
-    
