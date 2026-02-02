@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from enum import Enum
-from app.schemas.dna_schemas import DNASequence, StrandTranscriptionRole
+from app.schemas.dna_schemas import DNASequence
 from Bio.Seq import Seq
 from dataclasses import dataclass
 
@@ -25,16 +25,18 @@ class RhoIndependentTerminator:
     poly_tail_pattern = [r'(TTTTTTTT){s<=2}', r'(TTTTTTT){s<=2}', r'(TTTTTT){s<=1}']
     loop_length = (3, 4, 5, 6, 7, 8)
 
+
 @dataclass
-class TranscriptionTerminatorScoringConfig():
-    MAX_STEM_LENGTH=2*max(RhoIndependentTerminator.stem_length)
-    MAX_LOOP_LENGTH_SCORE=len(RhoIndependentTerminator.loop_length)
-    MAX_POLY_T_LENGTH=8 # max allowed length of poly-T tail
-    STEM_LENGTH_SCORE_WEIGHT=0.59
-    GC_FRACTION_SCORE_WEIGHT=0.26
-    POLY_T_LENGTH_SCORE_WEIGHT=0.09
-    LOOP_LENGTH_SCORE_WIEGHT=0.05
-    
+class TranscriptionTerminatorScoringConfig:
+    MAX_STEM_LENGTH = 2 * max(RhoIndependentTerminator.stem_length)
+    MAX_LOOP_LENGTH_SCORE = len(RhoIndependentTerminator.loop_length)
+    MAX_POLY_T_LENGTH = 8  # max allowed length of poly-T tail
+    STEM_LENGTH_SCORE_WEIGHT = 0.59
+    GC_FRACTION_SCORE_WEIGHT = 0.26
+    POLY_T_LENGTH_SCORE_WEIGHT = 0.09
+    LOOP_LENGTH_SCORE_WIEGHT = 0.05
+
+
 class TerminatorHit:
     def __init__(self, score, poly_t_match, loop_length, stem):
         self.score = score
@@ -63,8 +65,8 @@ class TerminatorHitResponse(BaseModel):
 class FindPromoterResponse(BaseModel):
     found: bool
     coding_strand: str | None
-    promoter_start:int
-    promoter_end:int
+    promoter_start: int
+    promoter_end: int
 
 
 class DoubleStrandedDNA:
