@@ -12,11 +12,13 @@ from app.schemas.ds_dna_schemas import (
 
 def find_promoter(dna: DoubleStrandedDNA):
     promoter_pattern = Sigma70Promoter.minus_35 + Sigma70Promoter.gap + Sigma70Promoter.minus_10
-    if regex.search(pattern=promoter_pattern, string=dna.forward_strand):
+    forward_strand_match_obj=regex.search(pattern=promoter_pattern, string=dna.forward_strand)
+    reverse_strand_match_obj=regex.search(pattern=promoter_pattern, string=dna.reverse_strand)
+    if forward_strand_match_obj:
         print('Promoter is on forward strand')
-        return {'found': True, 'coding_strand': dna.forward_strand}
-    if regex.search(pattern=promoter_pattern, string=dna.reverse_strand):
-        return {'found': True, 'coding_strand': dna.reverse_strand}
+        return {'found': True, 'coding_strand': dna.forward_strand,'promoter_start':forward_strand_match_obj.start(),"promoter_end":forward_strand_match_obj.end()}
+    if reverse_strand_match_obj:
+        return {'found': True, 'coding_strand': dna.reverse_strand,'promoter_start':reverse_strand_match_obj.start(),"promoter_end":reverse_strand_match_obj.end()}
     return {'found': False, 'coding_strand': None}
 
 
@@ -92,6 +94,13 @@ def find_terminator(dna: DoubleStrandedDNA):
         return {'found': False, 'terminator': {}}
     best = max(all_terminators, key=lambda terminator: terminator.score)
     return {'found': True, 'terminator': best.to_dict()}
+
+def extract_transcriptable_dna(dna:DoubleStrandedDNA):
+    dna_seq=dna.forward_strand
+    promoter=find_promoter(dna)
+    terminator=find_terminator(dna)
+    transcriptable_dna=dna_seq[promoter["promoter_end"]+6:terminator["terminator"]["end"]]
+    return transcriptable_dna
 
 
 def ds_transcription(transciptable_dna: str):

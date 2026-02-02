@@ -63,6 +63,8 @@ class TerminatorHitResponse(BaseModel):
 class FindPromoterResponse(BaseModel):
     found: bool
     coding_strand: str | None
+    promoter_start:int
+    promoter_end:int
 
 
 class DoubleStrandedDNA:
