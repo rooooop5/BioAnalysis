@@ -4,21 +4,21 @@ from app.schemas.dna_schemas import DNASequence
 from Bio.Seq import Seq
 from dataclasses import dataclass
 
-
-@dataclass
+#-----dataclass for Sigma 70 promoter for transcription-----
+@dataclass(frozen=True)
 class Sigma70Promoter:
     minus_35: str = r'(TTGACA){s<=1,i<=0,d<=0}'
     minus_10: str = r'(TATAAT){s<=1,i<=0,d<=0}'
     gap: str = r'.{16,18}'
 
-
-@dataclass
+#-----dataclass for polarity or directionality of strand-----
+@dataclass(frozen=True)
 class StrandPolarity(str, Enum):
     forward = '5_3'
     reverse = '3_5'
 
-
-@dataclass
+#-----dataclass for Rho Independent Transcription Terminator or Intrinsic Termination Terminator
+@dataclass(frozen=True)
 class RhoIndependentTerminator:
     min_stem_gc_fraction = 0.65
     stem_length = (6, 7, 8, 9, 10)
@@ -26,7 +26,7 @@ class RhoIndependentTerminator:
     loop_length = (3, 4, 5, 6, 7, 8)
 
 
-@dataclass
+@dataclass(frozen=True)
 class TranscriptionTerminatorScoringConfig:
     MAX_STEM_LENGTH = 2 * max(RhoIndependentTerminator.stem_length)
     MAX_LOOP_LENGTH_SCORE = len(RhoIndependentTerminator.loop_length)

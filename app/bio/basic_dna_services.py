@@ -1,7 +1,6 @@
 from Bio.SeqUtils import gc_fraction
-from Bio.Data import CodonTable
 from Bio.Seq import Seq
-from app.schemas.dna_schemas import DNASequence, DNAAnalysisOptions, StrandTranscriptionRole
+from app.schemas.dna_schemas import StrandTranscriptionRole
 import re
 
 
