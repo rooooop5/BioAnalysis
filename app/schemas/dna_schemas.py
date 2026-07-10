@@ -5,7 +5,6 @@ from Bio.Seq import Seq
 from pydantic import BaseModel
 
 DNAInvalidReasons = Literal[
-    "INVALID_CHARACTER_PRESENT",
     "CONTAINS_WHITESPACE",
     "NON_STRING_INPUT",
     "EMPTY_SEQUENCE",

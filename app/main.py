@@ -1,9 +1,8 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
-
+from fastapi.middleware.cors import CORSMiddleware
 from app.router.dna_routes import dna_router
 from app.router.central_dogma_routes import cd_router
-
 desc = """
 # Bioanalysis allows you to do awesome stuff🚀
 """
@@ -14,9 +13,16 @@ app = FastAPI(description=desc)
 def handler(req: Request, exception: HTTPException):
     return JSONResponse(
         status_code=exception.status_code,
-        content={'error': {'status_code': exception.status_code, 'message': exception.detail, 'path': req.url.path}},
+        content={
+            "error": {
+                "status_code": exception.status_code,
+                "message": exception.detail,
+                "path": req.url.path,
+            }
+        },
     )
 
 
 app.include_router(dna_router)
 app.include_router(cd_router)
+app.add_middleware(CORSMiddleware,allow_origins=["*"],allow_methods=["*"],allow_headers=["*"],allow_credentials=True)

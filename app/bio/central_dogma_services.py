@@ -29,7 +29,7 @@ def find_promoter(dna: DoubleStrandedDNA):
             'promoter_start': reverse_strand_match_obj.start(),
             'promoter_end': reverse_strand_match_obj.end(),
         }
-    return {'found': False, 'coding_strand': None}
+    return {'found': False, 'coding_strand': None,'promoter_start':-1,'promoter_end':-1}
 
 
 def terminator_strength(stem_tuple, loop_len, poly_t_match):

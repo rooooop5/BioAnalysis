@@ -36,36 +36,6 @@ Thumbs.db
 .vscode/
 .idea/
 
-# =====================
-# Bioinformatics outputs
-# =====================
-*.fasta
-*.fa
-*.fastq
-*.fq
-*.aln
-*.bam
-*.sam
-*.vcf
-*.gb
-*.gff
-
-# Analysis outputs
-results/
-outputs/
-tmp/
-temp/
 
 # =====================
-# Test artifacts
-# =====================
-.coverage
-htmlcov/
-pytest_cache/
-
-# =====================
-# Build artifacts
-# =====================
-build/
-dist/
-*.egg-info/
+.ruff_cache
