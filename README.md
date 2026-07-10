@@ -409,10 +409,3 @@ ruff format .
 Ruff configuration is in `ruff.toml`.
 
 ---
-
-## Use Cases
-
-- Bioinformatics education and prototyping
-- Backend engine for DNA visualization or annotation tools
-- Teaching demonstrations of the Central Dogma of Molecular Biology
-- Research prototyping for promoter/terminator discovery pipelines
